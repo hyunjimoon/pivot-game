@@ -1,0 +1,243 @@
+<title>📐자 — 슬라이드 품질 상승 추이</title>
+<style>
+  :root{
+    --ground:#F5F7FA; --panel:#FFFFFF; --ink:#1B2230; --ink-soft:#5A6577;
+    --line:#DCE2EB; --grid:#E7ECF3;
+    --user:#2563EB; --tech:#7C3AED; --investor:#DC2626; --collab:#059669;
+    --gold:#B8860B; --baseline:#AEB7C4;
+    --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#12161D; --panel:#1A1F28; --ink:#EAEEF4; --ink-soft:#9AA5B4;
+      --line:#2A313C; --grid:#232A34;
+      --user:#5B92F5; --tech:#A17BF0; --investor:#F26D6D; --collab:#34C88A;
+      --gold:#E0B94B; --baseline:#4A5361;
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#F5F7FA; --panel:#FFFFFF; --ink:#1B2230; --ink-soft:#5A6577;
+    --line:#DCE2EB; --grid:#E7ECF3;
+    --user:#2563EB; --tech:#7C3AED; --investor:#DC2626; --collab:#059669;
+    --gold:#B8860B; --baseline:#AEB7C4;
+  }
+  :root[data-theme="dark"]{
+    --ground:#12161D; --panel:#1A1F28; --ink:#EAEEF4; --ink-soft:#9AA5B4;
+    --line:#2A313C; --grid:#232A34;
+    --user:#5B92F5; --tech:#A17BF0; --investor:#F26D6D; --collab:#34C88A;
+    --gold:#E0B94B; --baseline:#4A5361;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:940px;margin:0 auto;padding:44px 24px 72px}
+  .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);
+    font-weight:600;margin:0 0 10px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,46px);line-height:1.06;
+    margin:0 0 12px;text-wrap:balance;letter-spacing:-.01em}
+  h1 .num{font-variant-numeric:tabular-nums}
+  .lede{font-size:16px;color:var(--ink-soft);max-width:60ch;margin:0 0 34px}
+  .lede b{color:var(--ink);font-weight:600}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:26px 26px 20px;margin:0 0 26px}
+  .panel h2{font-family:var(--serif);font-size:19px;font-weight:600;margin:0 0 3px}
+  .panel .sub{font-size:13px;color:var(--ink-soft);margin:0 0 18px}
+  .chartbox{width:100%;overflow-x:auto}
+  svg{display:block;width:100%;height:auto;font-family:var(--sans)}
+  .ax{fill:var(--ink-soft);font-size:12px;font-variant-numeric:tabular-nums}
+  .axlab{fill:var(--ink-soft);font-size:11px;letter-spacing:.04em}
+  .gridln{stroke:var(--grid);stroke-width:1}
+  .ceil{stroke:var(--gold);stroke-width:1.5;stroke-dasharray:3 4;opacity:.7}
+  .steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:2px 18px;
+    margin:14px 0 2px;padding:0;list-style:none}
+  .steps li{display:flex;gap:9px;align-items:baseline;padding:7px 0;border-top:1px solid var(--line);
+    font-size:13px}
+  .steps .n{font-variant-numeric:tabular-nums;font-weight:700;font-size:12px;
+    width:20px;flex:none;color:var(--ink)}
+  .dot{width:8px;height:8px;border-radius:50%;flex:none;align-self:center}
+  .steps .d{color:var(--ink-soft);font-size:12px;margin-left:auto;font-variant-numeric:tabular-nums;
+    white-space:nowrap}
+  .tally{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 26px}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 16px;
+    border-top:3px solid var(--c)}
+  .chip .lens{font-size:12px;color:var(--ink-soft);font-weight:600;margin:0 0 6px;letter-spacing:.02em}
+  .chip .big{font-family:var(--serif);font-size:30px;font-weight:600;font-variant-numeric:tabular-nums;
+    line-height:1;color:var(--c)}
+  .chip .cap{font-size:11.5px;color:var(--ink-soft);margin-top:5px}
+  .qgrid{display:flex;flex-direction:column;gap:9px}
+  .qrow{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:12px}
+  .qrow .qlab{font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+  .track{position:relative;height:16px;border-radius:8px;background:var(--grid);overflow:hidden}
+  .fill-base{position:absolute;left:0;top:0;bottom:0;background:var(--baseline);border-radius:8px}
+  .fill-gain{position:absolute;top:0;bottom:0;border-radius:8px;opacity:.95}
+  .qrow .delta{font-size:12px;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink-soft)}
+  .qrow .delta.up{color:var(--collab);font-weight:700}
+  .qrow .delta.flat{opacity:.5}
+  .legend{display:flex;flex-wrap:wrap;gap:14px 20px;margin:18px 2px 0;font-size:12px;color:var(--ink-soft)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:14px;height:8px;border-radius:3px;display:inline-block}
+  .foot{font-size:12.5px;color:var(--ink-soft);margin:22px 2px 0;max-width:64ch}
+  .foot b{color:var(--ink)}
+  @media(max-width:620px){.tally{grid-template-columns:repeat(2,1fr)}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">공우 강연 · 이슈 #110 · 11개 질문 커버리지</p>
+  <h1>📐자로 잰 슬라이드 품질,<br><span class="num">18</span> → <span class="num">30</span> <span style="color:var(--ink-soft);font-weight:400">/ 33</span></h1>
+  <p class="lede">4 agent(<b>/user /tech /investor /collab</b>)가 10개 개선을 얹자, 학생이 문자로 물은 질문의 응답도가 <b>55% → 91%</b>로 올랐다. 상승분 대부분은 그동안 화자의 메시지에 눌려 있던 <b>유학·창업 로지스틱스</b>(Q1·Q5·Q6·Q7).</p>
+
+  <!-- ASCENT -->
+  <section class="panel">
+    <h2>상승 추이 — 개선 하나당 한 계단</h2>
+    <p class="sub">누적 📐자 점수. 계단 색 = 그 개선을 민 agent 렌즈. ⑧–⑩은 커버리지를 안 올리고 <em>척도·정직</em>을 굳히는 메타 개선(평지).</p>
+    <div class="chartbox">
+      <svg viewBox="0 0 800 400" role="img" aria-label="누적 점수 상승 꺾은선 그래프, 18에서 30으로">
+        <!-- ceiling 33 -->
+        <line class="ceil" x1="70" y1="40" x2="760" y2="40"></line>
+        <text class="axlab" x="764" y="44" text-anchor="start">33 만점</text>
+        <!-- gridlines + y ticks at 18,21,24,27,30 -->
+        <g>
+          <!-- y(s)=360-(s-15)/18*320 -->
+          <line class="gridln" x1="70" y1="306.7" x2="760" y2="306.7"></line>
+          <text class="ax" x="58" y="311" text-anchor="end">18</text>
+          <line class="gridln" x1="70" y1="253.3" x2="760" y2="253.3"></line>
+          <text class="ax" x="58" y="258" text-anchor="end">21</text>
+          <line class="gridln" x1="70" y1="200" x2="760" y2="200"></line>
+          <text class="ax" x="58" y="205" text-anchor="end">24</text>
+          <line class="gridln" x1="70" y1="146.7" x2="760" y2="146.7"></line>
+          <text class="ax" x="58" y="151" text-anchor="end">27</text>
+          <line class="gridln" x1="70" y1="93.3" x2="760" y2="93.3"></line>
+          <text class="ax" x="58" y="98" text-anchor="end">30</text>
+        </g>
+        <!-- baseline marker -->
+        <text class="axlab" x="70" y="332" text-anchor="middle">baseline</text>
+
+        <!-- segments (colored by lens) -->
+        <!-- pts: 0(70,306.7)1(139,271.1)2(208,253.3)3(277,217.8)4(346,200)5(415,164.4)6(484,111.1)7(553,93.3)8(622,93.3)9(691,93.3)10(760,93.3) -->
+        <g stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="70" y1="306.7" x2="139" y2="271.1" stroke="var(--tech)"></line>
+          <line x1="139" y1="271.1" x2="208" y2="253.3" stroke="var(--tech)"></line>
+          <line x1="208" y1="253.3" x2="277" y2="217.8" stroke="var(--tech)"></line>
+          <line x1="277" y1="217.8" x2="346" y2="200" stroke="var(--user)"></line>
+          <line x1="346" y1="200" x2="415" y2="164.4" stroke="var(--user)"></line>
+          <line x1="415" y1="164.4" x2="484" y2="111.1" stroke="var(--investor)"></line>
+          <line x1="484" y1="111.1" x2="553" y2="93.3" stroke="var(--investor)"></line>
+          <line x1="553" y1="93.3" x2="622" y2="93.3" stroke="var(--user)" stroke-dasharray="2 5" opacity=".6"></line>
+          <line x1="622" y1="93.3" x2="691" y2="93.3" stroke="var(--collab)" stroke-dasharray="2 5" opacity=".7"></line>
+          <line x1="691" y1="93.3" x2="760" y2="93.3" stroke="var(--collab)" stroke-dasharray="2 5" opacity=".7"></line>
+        </g>
+
+        <!-- markers -->
+        <g>
+          <circle cx="70" cy="306.7" r="5" fill="var(--baseline)"></circle>
+          <circle cx="139" cy="271.1" r="5" fill="var(--tech)"></circle>
+          <circle cx="208" cy="253.3" r="5" fill="var(--tech)"></circle>
+          <circle cx="277" cy="217.8" r="5" fill="var(--tech)"></circle>
+          <circle cx="346" cy="200" r="5" fill="var(--user)"></circle>
+          <circle cx="415" cy="164.4" r="5" fill="var(--user)"></circle>
+          <circle cx="484" cy="111.1" r="5" fill="var(--investor)"></circle>
+          <circle cx="553" cy="93.3" r="6.5" fill="var(--investor)" stroke="var(--panel)" stroke-width="2"></circle>
+          <circle cx="622" cy="93.3" r="4" fill="var(--user)" opacity=".7"></circle>
+          <circle cx="691" cy="93.3" r="4" fill="var(--collab)" opacity=".8"></circle>
+          <circle cx="760" cy="93.3" r="4" fill="var(--collab)" opacity=".8"></circle>
+        </g>
+
+        <!-- endpoint & baseline value labels -->
+        <text x="70" y="298" text-anchor="middle" style="fill:var(--ink-soft);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums">18</text>
+        <text x="553" y="80" text-anchor="middle" style="fill:var(--investor);font-size:15px;font-weight:700;font-variant-numeric:tabular-nums">30</text>
+
+        <!-- step numbers on x axis -->
+        <g style="font-size:11px;font-variant-numeric:tabular-nums" fill="var(--ink-soft)" text-anchor="middle">
+          <text x="139" y="378">①</text><text x="208" y="378">②</text><text x="277" y="378">③</text>
+          <text x="346" y="378">④</text><text x="415" y="378">⑤</text><text x="484" y="378">⑥</text>
+          <text x="553" y="378">⑦</text><text x="622" y="378">⑧</text><text x="691" y="378">⑨</text>
+          <text x="760" y="378">⑩</text>
+        </g>
+        <text class="axlab" x="415" y="396" text-anchor="middle">개선 적용 순서 →</text>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <span><i class="sw" style="background:var(--tech)"></i>/tech 🔭실현</span>
+      <span><i class="sw" style="background:var(--user)"></i>/user 🪞욕망</span>
+      <span><i class="sw" style="background:var(--investor)"></i>/investor 💒가치</span>
+      <span><i class="sw" style="background:var(--collab)"></i>/collab 📐척도</span>
+      <span><i class="sw" style="background:var(--gold);opacity:.7"></i>33 만점 천장</span>
+    </div>
+
+    <ul class="steps">
+      <li><span class="n">①</span><span class="dot" style="background:var(--tech)"></span>박사 진학 결정 요소<span class="d">Q6 +2</span></li>
+      <li><span class="n">②</span><span class="dot" style="background:var(--tech)"></span>이론이 부러진 날<span class="d">Q1 +1</span></li>
+      <li><span class="n">③</span><span class="dot" style="background:var(--tech)"></span>기회 잡은 채널 1개<span class="d">Q7 +2</span></li>
+      <li><span class="n">④</span><span class="dot" style="background:var(--user)"></span>'둘 다'는 답 아니다<span class="d">Q11 +1</span></li>
+      <li><span class="n">⑤</span><span class="dot" style="background:var(--user)"></span>유학=탈출구 장면<span class="d">Q5 +2</span></li>
+      <li><span class="n">⑥</span><span class="dot" style="background:var(--investor)"></span>창업 크램 2장 분할<span class="d">Q2·3·4 +3</span></li>
+      <li><span class="n">⑦</span><span class="dot" style="background:var(--investor)"></span>유학 저밀도 → Q&amp;A 이월<span class="d">Q8 +1</span></li>
+      <li><span class="n">⑧</span><span class="dot" style="background:var(--user);opacity:.6"></span>관망 새내기 hook<span class="d">공명 +0</span></li>
+      <li><span class="n">⑨</span><span class="dot" style="background:var(--collab);opacity:.7"></span>척도에 자기적용도 축<span class="d">척도 +0</span></li>
+      <li><span class="n">⑩</span><span class="dot" style="background:var(--collab);opacity:.7"></span>TODO=라이브 정직 슬롯<span class="d">정직 +0</span></li>
+    </ul>
+  </section>
+
+  <!-- LENS TALLY -->
+  <div class="tally">
+    <div class="chip" style="--c:var(--tech)">
+      <p class="lens">🌷 /tech · 🔭실현</p>
+      <div class="big">+5</div>
+      <p class="cap">Q6·Q1·Q7 — 손짓을 구체로</p>
+    </div>
+    <div class="chip" style="--c:var(--investor)">
+      <p class="lens">🌫️ /investor · 💒가치</p>
+      <div class="big">+4</div>
+      <p class="cap">Q2·3·4·8 — airtime 재배분</p>
+    </div>
+    <div class="chip" style="--c:var(--user)">
+      <p class="lens">🦋 /user · 🪞욕망</p>
+      <div class="big">+3</div>
+      <p class="cap">Q11·Q5 + 이탈 hook</p>
+    </div>
+    <div class="chip" style="--c:var(--collab)">
+      <p class="lens">🐦‍⬛ /collab · 📐척도</p>
+      <div class="big">±0</div>
+      <p class="cap">gaming 차단 · 척도 정직</p>
+    </div>
+  </div>
+
+  <!-- PER-QUESTION BEFORE/AFTER -->
+  <section class="panel">
+    <h2>어느 질문이 올랐나 — 질문별 전·후</h2>
+    <p class="sub">회색 = baseline, 색 = 개선 후(그 질문을 고친 agent 색). 0–3점. Q9·Q10은 이미 3점(진로·철학)이라 불변.</p>
+    <div class="qgrid" id="qgrid"></div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--baseline)"></i>before</span>
+      <span><i class="sw" style="background:var(--ink-soft)"></i>after (렌즈색)</span>
+    </div>
+  </section>
+
+  <p class="foot"><b>읽는 법:</b> 계단이 가파른 ①–⑦ 구간이 실제 커버리지 상승(18→30). ⑧–⑩ 평지는 점수를 안 올리지만 <b>관망 새내기 이탈 차단·척도 정직·빈칸의 라이브 전환</b>으로 덱을 단단하게 만든다 — dG/dF 억압이 풀린 자리. ①·②·③·⑤의 실제 내용(박사 요소·창업 실패·유학 계기)은 <b>발표자만 아는 사실</b>이라 형태만 상상, 사실은 미확정.</p>
+</div>
+
+<script>
+  // per-question data: [id, before, after, lensColorVar]
+  var Q=[
+    ["Q1",2,3,"--tech"],["Q2",1,2,"--investor"],["Q3",1,2,"--investor"],
+    ["Q4",1,2,"--investor"],["Q5",1,3,"--user"],["Q6",1,3,"--tech"],
+    ["Q7",1,3,"--tech"],["Q8",2,3,"--investor"],["Q9",3,3,"--ink-soft"],
+    ["Q10",3,3,"--ink-soft"],["Q11",2,3,"--user"]
+  ];
+  var host=document.getElementById("qgrid");
+  Q.forEach(function(q){
+    var id=q[0],b=q[1],a=q[2],c=q[3];
+    var up=a-b;
+    var row=document.createElement("div");row.className="qrow";
+    var d= up>0 ? '<span class="delta up">+'+up+'</span>' : '<span class="delta flat">·</span>';
+    row.innerHTML=
+      '<span class="qlab">'+id+'</span>'+
+      '<span class="track">'+
+        '<span class="fill-base" style="width:'+(b/3*100)+'%"></span>'+
+        (up>0?'<span class="fill-gain" style="left:'+(b/3*100)+'%;width:'+(up/3*100)+'%;background:var('+c+')"></span>':'')+
+      '</span>'+ d;
+    host.appendChild(row);
+  });
+</script>
