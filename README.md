@@ -55,7 +55,6 @@
 | [`RUBRIC.md`](RUBRIC.md) | 📐자 척도 + 채점 + 10개 개선 |
 | [`docs/ascent.html`](docs/ascent.html) | 상승 추이 그래프 |
 | [`docs/metric-evolution.html`](docs/metric-evolution.html) | 평가기준의 진화 — 네 자리, 두 자(尺) |
-| [`docs/rehearse.html`](docs/rehearse.html) | 리허설 보드 — 빙산·네 장면·채점판 |
 
 ---
 
