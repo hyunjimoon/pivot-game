@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>리허설 보드 — 밀리기 전에 뛰어내려라</title>
+<style>
+  :root{
+    --ground:#F5F7FA; --panel:#FFFFFF; --ink:#1B2230; --ink-soft:#5A6577;
+    --line:#DCE2EB; --grid:#E7ECF3; --baseline:#AEB7C4;
+    --pain:#A8531E; --pass:#B8860B; --pivot:#2E6B4F; --sea:#3A5A8C;
+    --serif:Georgia,"Iowan Old Style","Apple Garamond","Times New Roman",serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Apple SD Gothic Neo",sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --ground:#12161D;--panel:#1A1F28;--ink:#EAEEF4;--ink-soft:#9AA5B4;
+    --line:#2A313C;--grid:#232A34;--baseline:#4A5361;
+    --pain:#D98A54;--pass:#E0B94B;--pivot:#4FB488;--sea:#7BA0DC;}}
+  :root[data-theme="light"]{--ground:#F5F7FA;--panel:#FFFFFF;--ink:#1B2230;--ink-soft:#5A6577;--line:#DCE2EB;--grid:#E7ECF3;--baseline:#AEB7C4;--pain:#A8531E;--pass:#B8860B;--pivot:#2E6B4F;--sea:#3A5A8C;}
+  :root[data-theme="dark"]{--ground:#12161D;--panel:#1A1F28;--ink:#EAEEF4;--ink-soft:#9AA5B4;--line:#2A313C;--grid:#232A34;--baseline:#4A5361;--pain:#D98A54;--pass:#E0B94B;--pivot:#4FB488;--sea:#7BA0DC;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:940px;margin:0 auto;padding:40px 22px 72px}
+  .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin:0 0 10px}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(26px,4.4vw,40px);line-height:1.08;margin:0 0 8px;letter-spacing:-.01em}
+  .lede{font-size:15px;color:var(--ink-soft);max-width:60ch;margin:0 0 22px}
+  .lede b{color:var(--ink)}
+  /* stopwatch */
+  .clock{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:0 0 26px;background:var(--panel)}
+  .clock .t{font-family:var(--serif);font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;min-width:78px;text-align:center}
+  .clock button{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;padding:5px 11px;cursor:pointer}
+  .clock button:hover{border-color:var(--ink-soft)}
+  h2{font-family:var(--serif);font-size:19px;font-weight:600;margin:34px 0 4px}
+  h2 .n{color:var(--ink-soft);font-weight:400;font-variant-numeric:tabular-nums}
+  .sub{font-size:13px;color:var(--ink-soft);margin:0 0 16px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+  /* one sentence */
+  .one{font-family:var(--serif);font-size:clamp(22px,3.6vw,32px);font-weight:600;text-align:center;
+    margin:8px 0 2px;letter-spacing:-.01em}
+  .one small{display:block;font-family:var(--sans);font-size:13px;font-weight:400;color:var(--ink-soft);margin-top:8px;letter-spacing:0}
+  /* iceberg */
+  .berg .above{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:2px 0 0}
+  .say{border:1px solid var(--line);border-left:3px solid var(--pivot);border-radius:9px;padding:11px 13px;background:var(--panel)}
+  .say b{font-family:var(--serif);font-size:15px}
+  .say span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .waterline{display:flex;align-items:center;gap:12px;margin:18px 0 12px;color:var(--sea);font-size:12px;letter-spacing:.1em;font-weight:600}
+  .waterline::before,.waterline::after{content:"";flex:1;height:0;border-top:2px dashed var(--sea);opacity:.55}
+  .below{display:flex;flex-wrap:wrap;gap:7px}
+  .sink{font-size:12px;color:var(--ink-soft);border:1px dashed var(--line);border-radius:20px;padding:4px 11px;opacity:.75}
+  .sink s{text-decoration-color:var(--sea)}
+  /* scenes */
+  .scenes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .scene{border:1px solid var(--line);border-radius:13px;padding:16px 17px;background:var(--panel);position:relative}
+  .scene.hot{border-color:var(--pass)}
+  .scene .ord{font-family:var(--serif);font-size:13px;font-weight:700;color:var(--ink-soft)}
+  .scene .ord .star{color:var(--pass)}
+  .scene h3{font-family:var(--serif);font-size:16px;font-weight:600;margin:3px 0 10px}
+  .chain{display:flex;align-items:center;gap:6px;font-size:12.5px;flex-wrap:wrap;margin:0 0 9px}
+  .chain .p{font-weight:600;padding:2px 8px;border-radius:6px}
+  .chain .pain{color:var(--pain);background:color-mix(in srgb,var(--pain) 12%,transparent)}
+  .chain .pass{color:var(--pass);background:color-mix(in srgb,var(--pass) 12%,transparent)}
+  .chain .piv{color:var(--pivot);background:color-mix(in srgb,var(--pivot) 12%,transparent)}
+  .chain .ar{color:var(--ink-soft)}
+  .emo{font-size:12px;color:var(--ink-soft);letter-spacing:.04em;margin:0 0 8px}
+  .emo b{color:var(--ink);font-family:var(--serif)}
+  .tool{font-size:12px;color:var(--ink-soft)}
+  .tool b{color:var(--pivot)}
+  .refrain{margin-top:10px;font-size:12px;color:var(--pivot);font-style:italic;border-top:1px solid var(--line);padding-top:8px}
+  /* scorecard */
+  .score table{width:100%;border-collapse:collapse}
+  .score th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;padding:0 0 10px}
+  .score td{padding:9px 0;border-top:1px solid var(--line);font-size:13.5px;vertical-align:middle}
+  .score .who{font-weight:600}.score .who small{display:block;color:var(--ink-soft);font-weight:400;font-size:11.5px}
+  .dots{display:flex;gap:7px}
+  .dot{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);background:transparent;cursor:pointer;
+    font:inherit;font-size:11px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .dot[aria-pressed="true"]{background:var(--pivot);border-color:var(--pivot);color:#fff;font-weight:700}
+  .exit{width:100%;font:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:8px;
+    padding:6px 9px;background:transparent;color:var(--ink)}
+  .totrow{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font-size:13px;color:var(--ink-soft)}
+  .totrow b{font-family:var(--serif);font-size:22px;color:var(--ink);font-variant-numeric:tabular-nums}
+  /* 60-min strip */
+  .blocks{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:4px}
+  .blk{border:1px solid var(--line);border-radius:10px;padding:11px 10px;background:var(--panel);text-align:center}
+  .blk .m{font-family:var(--serif);font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+  .blk .lab{font-size:11.5px;color:var(--ink-soft);margin-top:3px;line-height:1.3}
+  .blk.key{border-color:var(--pass)}
+  .foot{font-size:12px;color:var(--ink-soft);margin-top:26px;letter-spacing:.02em;text-align:center}
+  @media(max-width:640px){.scenes{grid-template-columns:1fr}.blocks{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">공우 강연 · 리허설 보드</p>
+  <h1>참는 연습 — 밀리기 전에 뛰어내려라</h1>
+  <p class="lede">이 강연의 적은 <b>설명하려는 충동</b>이다. 물밑은 이미 계산됐으니, 오늘은 <b>수면 위 다섯</b>만 말하고 나머지는 가라앉히는 근육을 기른다. 완주하며 아래 <b>/listener 채점판</b>을 채워라 — 폰이 켜지는 순간이 가장 값진 산출물.</p>
+
+  <div class="clock">
+    <span class="t" id="t">00:00</span>
+    <button onclick="tk.toggle()" id="pp">시작</button>
+    <button onclick="tk.reset()">리셋</button>
+    <span style="font-size:12px;color:var(--ink-soft)">40분 목표</span>
+  </div>
+
+  <!-- ONE -->
+  <div class="panel">
+    <p class="one">“밀리기 전에 뛰어내려라.”
+      <small>떠밀리면 추락 · 내가 뛰면 pivot · 차이는 <b style="color:var(--ink)">계획</b>, 타이밍은 <b style="color:var(--ink)">‘밀리기 전’</b></small></p>
+  </div>
+
+  <!-- ICEBERG -->
+  <h2>빙산 <span class="n">· 1/8만 말한다</span></h2>
+  <p class="sub">위 다섯은 소리내어. 아래는 알되 입 밖으로 내지 마라 — 청중이 스스로 건진다.</p>
+  <div class="panel berg">
+    <div class="above">
+      <div class="say"><b>① 한 문장</b><span>밀리기 전에 뛰어내려라</span></div>
+      <div class="say"><b>② 네 장면</b><span>Pain→Passion→Pivot, 이야기로만</span></div>
+      <div class="say"><b>③ 한 도구</b><span>무인도 테스트</span></div>
+      <div class="say"><b>④ 한 고백</b><span>“나도 지금 뛰는 중”</span></div>
+      <div class="say"><b>⑤ 한 규칙</b><span>돈은 순서대로 — 먼저 받지 마라</span></div>
+    </div>
+    <div class="waterline">수면 · WATERLINE</div>
+    <div class="below">
+      <span class="sink"><s>τ*</s> → “밀리기 전”</span>
+      <span class="sink"><s>3S</s> 장면에서 시연만</span>
+      <span class="sink"><s>desire·belief·action·metric</s></span>
+      <span class="sink"><s>사·기·투·협 격자</s> → 질문 하나</span>
+      <span class="sink"><s>dG/dF · Fubini · calibration</s></span>
+      <span class="sink"><s>de Finetti · 전략적 중첩</s></span>
+    </div>
+  </div>
+
+  <!-- SCENES -->
+  <h2>네 장면 <span class="n">· Pain이 다음 Passion의 연료</span></h2>
+  <p class="sub">★ = /listener 공감 top. 감정 박자는 <b>느끼게</b> 하되 설명하지 마라. 매 장면 끝 후렴.</p>
+  <div class="scenes">
+    <div class="scene hot">
+      <div class="ord"><span class="star">★1</span> · 장면 1 · 진로</div>
+      <h3>의대 낙방 → 산공·최적화</h3>
+      <div class="chain"><span class="p pain">낙방·태움</span><span class="ar">→</span><span class="p pass">최적화 열정</span><span class="ar">→</span><span class="p piv">산공 재명명</span></div>
+      <p class="emo">감정 · <b>!</b> 자긍 → <b>?</b> 왜 나 → 눈물 → 🌱씨앗</p>
+      <p class="tool">도구 · <b>무인도 테스트</b> “아무도 안 보면 할 것인가?”</p>
+      <p class="refrain">떠밀리기 전, 내 기준으로 뛴다.</p>
+    </div>
+    <div class="scene">
+      <div class="ord">★3 · 장면 2 · 이론→산업</div>
+      <h3>베이커리 앱 외면 → 베이즈</h3>
+      <div class="chain"><span class="p pain">2달 만에 외면</span><span class="ar">→</span><span class="p pass">베이즈 열정</span><span class="ar">→</span><span class="p piv">사용자 매칭</span></div>
+      <p class="emo">감정 · <b>!</b> 이론 대단 → <b>?</b> 왜 안 써 → 눈물 → 🌱</p>
+      <p class="tool">한 장면 · <b>실패 = 빚을 드러내는 거울</b> (pellet·군수)</p>
+      <p class="refrain">자금·경로 고착되기 전 뛴다.</p>
+    </div>
+    <div class="scene">
+      <div class="ord">장면 3 · 유학·협력</div>
+      <h3>그룹 탈락 → Charles Fine</h3>
+      <div class="chain"><span class="p pain">소속 실패·충돌</span><span class="ar">→</span><span class="p pass">사랑 ♡ 협력</span><span class="ar">→</span><span class="p piv">두드림</span></div>
+      <p class="emo">감정 · 눈물 → <b>♡</b> “먼저 사랑에 빠지고 주제를 골라라”</p>
+      <p class="tool">한 줄 · 기회는 기다림이 아니라 <b>두드림</b></p>
+      <p class="refrain">국내 트랙 고착되기 전 뛴다.</p>
+    </div>
+    <div class="scene hot">
+      <div class="ord"><span class="star">★2</span> · 장면 4 · 작가 · 클라이맥스</div>
+      <h3>학문 회의 → 작가 소명</h3>
+      <div class="chain"><span class="p pain">기성 학문 회의</span><span class="ar">→</span><span class="p pass">작가 열정</span><span class="ar">→</span><span class="p piv">지금 뛰는 중</span></div>
+      <p class="emo">고백 · <b>실시간 불안 1문장</b> (성공담 금지) <span style="color:var(--pain)">[발표자 확정]</span></p>
+      <p class="tool">규칙 · <b>돈은 순서대로 — 먼저 받지 마라</b> (닫기)</p>
+      <p class="refrain">나도 지금, 밀리기 전에 뛴다.</p>
+    </div>
+  </div>
+
+  <!-- SCORECARD -->
+  <h2>/listener 채점판 <span class="n">· 완주하며 클릭</span></h2>
+  <p class="sub">각 청자 0–3 (0 부재 · 1 언급 · 2 응답 · 3 “내 얘기”). 폰 켜는 순간을 적어라.</p>
+  <div class="panel score">
+    <table>
+      <thead><tr><th style="width:38%">청자 (척도)</th><th>점수</th><th style="width:34%">폰 켜는 순간</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="totrow"><span>합계 (관망 이탈 대목은 잘라라)</span><span><b id="tot">0</b> / 15</span></div>
+  </div>
+
+  <!-- 60-MIN -->
+  <h2>60분 블록 <span class="n">· 재료 그대로</span></h2>
+  <div class="blocks">
+    <div class="blk"><div class="m">5′</div><div class="lab">0 앵커<br>한 문장 ×3</div></div>
+    <div class="blk key"><div class="m">15′</div><div class="lab">1 장면만<br>틀 단어 금지</div></div>
+    <div class="blk key"><div class="m">10′</div><div class="lab">2 도입 45초<br>×5 녹음</div></div>
+    <div class="blk"><div class="m">15′</div><div class="lab">3 완주<br>+ 셀프 채점</div></div>
+    <div class="blk"><div class="m">10′</div><div class="lab">4 최악 1곳<br>+ 후렴</div></div>
+    <div class="blk"><div class="m">5′</div><div class="lab">5 고백<br>+ 닫기</div></div>
+  </div>
+
+  <p class="foot">폰 녹음 = 방에 없는 협력자의 외부 자(尺). · pivot-game · 遺事 · 2026-07-12</p>
+</div>
+
+<script>
+  // stopwatch
+  var tk={s:0,on:false,id:null,
+    fmt:function(x){var m=Math.floor(x/60),s=x%60;return (m<10?'0':'')+m+':'+(s<10?'0':'')+s},
+    tick:function(){this.s++;document.getElementById('t').textContent=this.fmt(this.s)},
+    toggle:function(){this.on=!this.on;document.getElementById('pp').textContent=this.on?'멈춤':'시작';
+      if(this.on){this.id=setInterval(this.tick.bind(this),1000)}else{clearInterval(this.id)}},
+    reset:function(){clearInterval(this.id);this.on=false;this.s=0;document.getElementById('pp').textContent='시작';document.getElementById('t').textContent='00:00'}};
+  // scorecard
+  var P=[["유학 지망생","실행가능성"],["진로 미정 불안러","공명 · 최대 분파"],["창업 관심러","신뢰성"],["스펙 최적화러","결정 도구"],["관망 새내기","흥미 · 폰"]];
+  var sc=[null,null,null,null,null];
+  var tb=document.getElementById('rows');
+  P.forEach(function(p,i){
+    var tr=document.createElement('tr');
+    var dots='';for(var n=0;n<=3;n++){dots+='<button class="dot" aria-pressed="false" onclick="setS('+i+','+n+',this)">'+n+'</button>'}
+    tr.innerHTML='<td class="who">'+p[0]+'<small>'+p[1]+'</small></td><td><div class="dots">'+dots+'</div></td><td><input class="exit" placeholder="어느 문장에서…"></td>';
+    tb.appendChild(tr);
+  });
+  function setS(i,n,btn){
+    sc[i]=n;
+    var row=btn.parentNode.querySelectorAll('.dot');
+    row.forEach(function(d,k){d.setAttribute('aria-pressed', k===n?'true':'false')});
+    document.getElementById('tot').textContent=sc.reduce(function(a,b){return a+(b||0)},0);
+  }
+</script>
+</body>
+</html>
