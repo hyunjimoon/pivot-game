@@ -54,6 +54,7 @@
 | [`QUESTIONS.md`](QUESTIONS.md) | 이슈 #110 원문 11질문 (공대 1·2학년 120명) |
 | [`RUBRIC.md`](RUBRIC.md) | 📐자 척도 + 채점 + 10개 개선 |
 | [`docs/ascent.html`](docs/ascent.html) | 상승 추이 그래프 |
+| [`docs/metric-evolution.html`](docs/metric-evolution.html) | 평가기준의 진화 — 네 자리, 두 자(尺) |
 
 ---
 
